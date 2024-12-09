@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
-import { State, useAppState } from "./state";
+import { State, stateStorageContext, useAppState } from "./state";
 
 const socketContext = createContext<Socket | null>(null);
 export default socketContext;
@@ -15,7 +15,7 @@ export function useSocket() {
 
 export function SocketProvider({ children }: { children: React.ReactNode }) {
   const [socket, setSocket] = useState<Socket | null>(null);
-  const { _internal_setAppState } = useAppState();
+  const { _internal_setAppState } = useContext(stateStorageContext);
 
   // Create a new socket when the component mounts
   useEffect(() => {
@@ -43,10 +43,10 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
       _internal_setAppState(message);
     };
 
-    socket.on("message", handler);
+    socket.on("appState", handler);
 
     return () => {
-      socket.off("message", handler);
+      socket.off("appState", handler);
     };
   }, [socket, _internal_setAppState]);
 
@@ -58,12 +58,15 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
 }
 
 export function useSetAppState() {
-  const { appState } = useAppState();
+  const appState = useAppState();
   const socket = useSocket();
+  const setAppState = useContext(stateStorageContext)._internal_setAppState;
 
   return (newState: Partial<State>) => {
     const mergedState = { ...appState, ...newState };
+    console.log("Sending state to server", mergedState);
 
-    socket.send("message", mergedState);
+    socket.emit("appState", mergedState);
+    setAppState(mergedState);
   };
 }

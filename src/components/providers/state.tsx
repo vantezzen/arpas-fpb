@@ -71,5 +71,5 @@ export function StateStorageProvider({
 }
 
 export function useAppState() {
-  return useContext(stateStorageContext);
+  return useContext(stateStorageContext).appState
 }

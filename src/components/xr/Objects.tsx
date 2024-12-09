@@ -3,7 +3,7 @@ import { Gltf } from "@react-three/drei";
 import { useAppState } from "../providers/state";
 
 function Objects() {
-  const { appState } = useAppState();
+  const appState = useAppState();
 
   return (
     <>

@@ -2,26 +2,29 @@
 import { SocketProvider } from "@/components/providers/socket";
 import { StateStorageProvider } from "@/components/providers/state";
 import React from "react";
+import dynamic from "next/dynamic";
 
-import { XR } from "@react-three/xr";
-import { Canvas } from "@react-three/fiber";
-import { Text, Gltf, Clouds, Cloud } from "@react-three/drei";
-import * as THREE from "three";
-import { Button } from "@/components/ui/button";
-import { xrstore } from "@/lib/xr";
-import Objects from "@/components/xr/Objects";
+// Import Three.js components dynamically to avoid SSR issues
+const Scene = dynamic(
+  () => import("@/components/puppet/Scene").then((mod) => mod.default),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="flex items-center justify-center h-screen">
+        <div className="text-center">
+          <h2 className="text-xl font-medium mb-2">Loading AR Experience...</h2>
+          <p className="text-muted-foreground">Please wait a moment</p>
+        </div>
+      </div>
+    ),
+  }
+);
 
 function PuppetPage() {
   return (
     <StateStorageProvider>
       <SocketProvider>
-        <Button onClick={() => xrstore.enterAR()}>Start AR</Button>
-        <Canvas>
-          <XR store={xrstore}>
-            <ambientLight />
-            <Objects />
-          </XR>
-        </Canvas>
+        <Scene />
       </SocketProvider>
     </StateStorageProvider>
   );

@@ -14,7 +14,7 @@ import ObjectDemo from "./ObjectDemo";
 import { Euler, Vector3 } from "three";
 
 function ObjectSelector() {
-  const { appState } = useAppState();
+  const appState = useAppState();
   const [isOpen, setIsOpen] = React.useState(false);
 
   const setAppState = useSetAppState();
