@@ -12,12 +12,15 @@ import {
 } from "../ui/drawer";
 import ObjectDemo from "./ObjectDemo";
 import { Euler, Vector3 } from "three";
+import { HitTestManager } from "@/lib/interactions/HitTestManager";
 
 function ObjectSelector() {
   const appState = useAppState();
   const [isOpen, setIsOpen] = React.useState(false);
 
   const setAppState = useSetAppState();
+
+  const hitTestManager = new HitTestManager();
 
   return (
     <>
@@ -39,12 +42,13 @@ function ObjectSelector() {
                 key={index}
                 className="cursor-pointer w-full h-32"
                 onClick={() => {
+                  const hitPosition = hitTestManager.getHitPosition();
                   setAppState({
                     objects: [
                       ...appState.objects,
                       {
                         url: object.url,
-                        position: new Vector3(0, 0, 0),
+                        position: hitPosition || new Vector3(0, 0, 0),
                         scale: new Vector3(1, 1, 1),
                         rotation: new Euler(0, 0, 0),
                       },

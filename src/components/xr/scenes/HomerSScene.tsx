@@ -7,6 +7,7 @@ const interactionManager = new HomerSInteractionManager({
   modeful: true,
   useDevicePosition: true,
   usePlaneDetection: true,
+  useHitTestSnapping: true,
 });
 
 function HomerSScene() {

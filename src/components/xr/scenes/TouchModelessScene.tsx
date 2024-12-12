@@ -6,6 +6,7 @@ const interactionManager = new TouchModelessManager({
   modeful: false,
   useDevicePosition: false,
   usePlaneDetection: true,
+  useHitTestSnapping: true,
 });
 
 function TouchModelessScene() {

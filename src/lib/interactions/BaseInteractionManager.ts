@@ -7,11 +7,14 @@ import {
 import { Object } from "@/components/providers/state";
 
 export abstract class BaseInteractionManager implements InteractionManager {
-  protected state: InteractionState = {
+  public state: InteractionState = {
     selectedObject: null,
     mode: "none",
     isInteracting: false,
   };
+
+  shouldSnapToPlane = this.config.usePlaneDetection;
+  shouldSnapToHitTest = this.config.useHitTestSnapping;
 
   constructor(protected config: InteractionConfig) {}
 

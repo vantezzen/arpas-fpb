@@ -21,7 +21,7 @@ const Scene = dynamic(
 function PuppetPage() {
   return (
     <StateStorageProvider>
-      <Scene />
+      <Scene interactionType="homer-s" />
     </StateStorageProvider>
   );
 }

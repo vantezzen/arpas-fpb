@@ -20,6 +20,7 @@ export interface InteractionConfig {
   modeful: boolean;
   useDevicePosition: boolean; // HOMER-S
   usePlaneDetection: boolean;
+  useHitTestSnapping: boolean;
 }
 
 export interface InteractionManager {
@@ -35,6 +36,7 @@ export interface InteractionManager {
     scale: Vector3;
   };
   onPlaneDetected?: (plane: XRPlane) => void;
-  shouldSnapToPlane?: boolean;
+  shouldSnapToPlane: boolean;
+  shouldSnapToHitTest: boolean;
   getClosestPlane?: (position: Vector3) => XRPlane | null;
 }

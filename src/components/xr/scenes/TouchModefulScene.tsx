@@ -4,7 +4,8 @@ import InteractiveObjects from "../InteractiveObjects";
 const interactionManager = new TouchInteractionManager({
   modeful: true,
   useDevicePosition: false,
-  usePlaneDetection: false,
+  usePlaneDetection: true,
+  useHitTestSnapping: true,
 });
 
 function TouchModefulScene() {
