@@ -1,5 +1,5 @@
 import { HomerSInteractionManager } from "./HomerSInteractionManager";
-import { Vector3, Euler } from "three";
+import { Vector3, Euler, Quaternion } from "three";
 
 export class HomerSModelessManager extends HomerSInteractionManager {
   onInteractionMove(event: any) {
@@ -10,20 +10,34 @@ export class HomerSModelessManager extends HomerSInteractionManager {
       this.deviceStartPosition
     );
 
-    // Calculate the movement direction to determine the interaction type
-    const horizontalMovement =
-      Math.abs(deviceDelta.x) + Math.abs(deviceDelta.z);
+    const currentRotation = new Quaternion();
+    event.camera.getWorldQuaternion(currentRotation);
+    const rotationDelta = currentRotation.multiply(
+      this.deviceStartRotation.clone().invert()
+    );
+
+    // Determine primary movement direction
     const verticalMovement = Math.abs(deviceDelta.y);
+    const horizontalMovement = Math.sqrt(
+      deviceDelta.x * deviceDelta.x + deviceDelta.z * deviceDelta.z
+    );
 
     if (verticalMovement > horizontalMovement) {
-      // Vertical movement = scaling
+      // Vertical movement controls scale
       const scaleFactor = 1 + deviceDelta.y * 0.1;
-      event.object.scale.setScalar(scaleFactor);
+      return {
+        position: this.objectStartPosition.clone(),
+        scale: new Vector3(scaleFactor, scaleFactor, scaleFactor),
+        rotation: this.objectStartRotation.clone(),
+      };
     } else {
-      // Horizontal movement = translation + rotation
-      const rotationFactor = deviceDelta.length() * 0.5;
-      event.object.rotation.y += rotationFactor;
-      event.object.position.add(deviceDelta);
+      // Horizontal movement controls position and rotation
+      const euler = new Euler().setFromQuaternion(rotationDelta);
+      return {
+        position: this.objectStartPosition.clone().add(deviceDelta),
+        rotation: euler,
+        scale: new Vector3(1, 1, 1),
+      };
     }
   }
 }

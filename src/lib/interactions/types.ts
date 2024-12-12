@@ -34,4 +34,7 @@ export interface InteractionManager {
     rotation: Euler;
     scale: Vector3;
   };
+  onPlaneDetected?: (plane: XRPlane) => void;
+  shouldSnapToPlane?: boolean;
+  getClosestPlane?: (position: Vector3) => XRPlane | null;
 }

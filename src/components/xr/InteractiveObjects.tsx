@@ -1,8 +1,9 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useMemo } from "react";
 import { Gltf } from "@react-three/drei";
 import { useAppState } from "../providers/state";
 import { InteractionManager } from "@/lib/interactions/types";
-import { useXR } from "@react-three/xr";
+import { useXR, useXRPlanes } from "@react-three/xr";
+import { PlaneDetectionManager } from "@/lib/interactions/PlaneDetectionManager";
 
 interface Props {
   interactionManager: InteractionManager;
@@ -10,17 +11,29 @@ interface Props {
 
 function InteractiveObjects({ interactionManager }: Props) {
   const appState = useAppState();
-  const xr = useXR();
+  const planes = useXRPlanes();
+  const planeManager = useMemo(() => new PlaneDetectionManager(), []);
 
   useEffect(() => {
-    // Set up event listeners based on interaction type
-    // This will be different for touch vs HOMER-S
-  }, [interactionManager]);
+    planeManager.updatePlanes(planes);
+  }, [planes, planeManager]);
 
   return (
     <>
       {appState.objects.map((object, index) => {
-        const transform = interactionManager.getObjectTransform(object);
+        let transform = interactionManager.getObjectTransform(object);
+
+        if (interactionManager.shouldSnapToPlane) {
+          const closestPlane = planeManager.findClosestPlane(
+            transform.position
+          );
+          if (closestPlane) {
+            transform.position = planeManager.snapPositionToPlane(
+              transform.position,
+              closestPlane
+            );
+          }
+        }
 
         return (
           <Gltf

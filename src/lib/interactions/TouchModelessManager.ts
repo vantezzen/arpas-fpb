@@ -73,18 +73,13 @@ export class TouchModelessManager extends BaseInteractionManager {
   }
 
   getObjectTransform(object: Object) {
-    if (this.config.usePlaneDetection) {
-      // We'll implement this with the PlaneDetectionManager
-      return {
-        position: object.position,
-        rotation: object.rotation,
-        scale: object.scale,
-      };
-    }
-    return {
+    const transform = {
       position: object.position,
       rotation: object.rotation,
       scale: object.scale,
     };
+
+    // The actual snapping will be handled by InteractiveObjects
+    return transform;
   }
 }
