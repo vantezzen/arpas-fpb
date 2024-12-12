@@ -1,21 +1,10 @@
 import React, { Suspense } from "react";
 import { Canvas } from "@react-three/fiber";
 import { XR } from "@react-three/xr";
-import Objects from "../xr/Objects";
-import SyncPlayerPosition from "../xr/SyncPlayerPosition";
-import ShowInteractions from "../ShowInteractions";
+import Objects from "./Objects";
+import SyncPlayerPosition from "./SyncPlayerPosition";
 import { xrstore } from "@/lib/xr";
-import "@react-three/fiber";
 import { Button } from "../ui/button";
-
-declare module "@react-three/fiber" {
-  interface ThreeElements {
-    ambientLight: any;
-    directionalLight: any;
-    mesh: any;
-    group: any;
-  }
-}
 
 function Scene() {
   return (
@@ -37,7 +26,7 @@ function Scene() {
           fov: 75,
         }}
       >
-        <XR store={xrstore} referenceSpace="local">
+        <XR store={xrstore}>
           <Suspense fallback={null}>
             <ambientLight intensity={0.5} />
             <directionalLight position={[1, 1, 1]} intensity={1} />
@@ -47,8 +36,6 @@ function Scene() {
           </Suspense>
         </XR>
       </Canvas>
-
-      <ShowInteractions />
     </div>
   );
 }

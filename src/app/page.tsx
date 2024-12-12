@@ -1,17 +1,29 @@
-import { Button } from "@/components/ui/button";
-import Image from "next/image";
-import Link from "next/link";
+"use client";
+import { StateStorageProvider } from "@/components/providers/state";
+import React from "react";
+import dynamic from "next/dynamic";
 
-export default function Home() {
+const Scene = dynamic(
+  () => import("@/components/xr/Scene").then((mod) => mod.default),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="flex items-center justify-center h-screen">
+        <div className="text-center">
+          <h2 className="text-xl font-medium mb-2">Loading AR Experience...</h2>
+          <p className="text-muted-foreground">Please wait a moment</p>
+        </div>
+      </div>
+    ),
+  }
+);
+
+function PuppetPage() {
   return (
-    <main>
-      <Link href="/puppet">
-        <Button>Puppet</Button>
-      </Link>
-
-      <Link href="/wizard">
-        <Button>Wizard</Button>
-      </Link>
-    </main>
+    <StateStorageProvider>
+      <Scene />
+    </StateStorageProvider>
   );
 }
+
+export default PuppetPage;

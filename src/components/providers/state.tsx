@@ -45,10 +45,10 @@ const DEFAULT_STATE: State = {
 
 export const stateStorageContext = createContext<{
   appState: State;
-  _internal_setAppState: (state: State) => void;
+  setAppState: (state: State) => void;
 }>({
   appState: DEFAULT_STATE,
-  _internal_setAppState: () => {},
+  setAppState: () => {},
 });
 
 export function StateStorageProvider({
@@ -62,7 +62,7 @@ export function StateStorageProvider({
     <stateStorageContext.Provider
       value={{
         appState,
-        _internal_setAppState: setAppState,
+        setAppState: setAppState,
       }}
     >
       {children}
@@ -71,5 +71,5 @@ export function StateStorageProvider({
 }
 
 export function useAppState() {
-  return useContext(stateStorageContext).appState
+  return useContext(stateStorageContext).appState;
 }
