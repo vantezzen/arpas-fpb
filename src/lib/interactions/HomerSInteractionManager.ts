@@ -3,11 +3,11 @@ import { Vector3, Euler, Matrix4, Quaternion } from "three";
 import { Object } from "@/components/providers/state";
 
 export class HomerSInteractionManager extends BaseInteractionManager {
-  private deviceStartPosition = new Vector3();
-  private deviceStartRotation = new Quaternion();
-  private objectStartPosition = new Vector3();
-  private objectStartRotation = new Euler();
-  private matrixHelper = new Matrix4();
+  public deviceStartPosition = new Vector3();
+  public deviceStartRotation = new Quaternion();
+  public objectStartPosition = new Vector3();
+  public objectStartRotation = new Euler();
+  public matrixHelper = new Matrix4();
 
   shouldSnapToPlane = this.config.usePlaneDetection;
 

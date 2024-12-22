@@ -1,8 +1,7 @@
 import React from "react";
-import { Plus, X } from "lucide-react";
+import { Plus } from "lucide-react";
 import { OBJECTS, useAppState } from "../providers/state";
 import { Button } from "../ui/button";
-import { useSetAppState } from "../providers/socket";
 import {
   Drawer,
   DrawerContent,
@@ -15,10 +14,8 @@ import { Euler, Vector3 } from "three";
 import { HitTestManager } from "@/lib/interactions/HitTestManager";
 
 function ObjectSelector() {
-  const appState = useAppState();
+  const [appState, setAppState] = useAppState();
   const [isOpen, setIsOpen] = React.useState(false);
-
-  const setAppState = useSetAppState();
 
   const hitTestManager = new HitTestManager();
 

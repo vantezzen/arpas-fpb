@@ -1,5 +1,6 @@
 import { TouchInteractionManager } from "@/lib/interactions/TouchInteractionManager";
 import InteractiveObjects from "../InteractiveObjects";
+import { useModeInManager } from "./ModeContext";
 
 const interactionManager = new TouchInteractionManager({
   modeful: true,
@@ -9,6 +10,7 @@ const interactionManager = new TouchInteractionManager({
 });
 
 function TouchModefulScene() {
+  useModeInManager(interactionManager);
   return <InteractiveObjects interactionManager={interactionManager} />;
 }
 

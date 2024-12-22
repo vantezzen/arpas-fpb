@@ -1,5 +1,5 @@
 import { Object } from "@/components/providers/state";
-import { Vector3, Euler, Matrix4 } from "three";
+import { Vector3, Euler } from "three";
 
 export type InteractionMode = "none" | "translate" | "rotate" | "scale";
 
@@ -24,6 +24,7 @@ export interface InteractionConfig {
 }
 
 export interface InteractionManager {
+  config: InteractionConfig;
   onSelect: (objectIndex: number) => void;
   onDeselect: () => void;
   onModeChange: (mode: InteractionMode) => void;

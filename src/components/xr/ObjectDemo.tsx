@@ -1,6 +1,6 @@
 import React, { Suspense, useEffect, useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { OrbitControls, useGLTF, Box, Gltf } from "@react-three/drei";
+import { OrbitControls, useGLTF } from "@react-three/drei";
 import * as THREE from "three";
 
 const SpinningModel = ({ url }: { url: string }) => {

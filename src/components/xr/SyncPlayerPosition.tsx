@@ -1,9 +1,9 @@
 import React from "react";
-import { useSetAppState } from "../providers/socket";
 import { useThree } from "@react-three/fiber";
+import { useAppState } from "../providers/state";
 
 function SyncPlayerPosition() {
-  const setAppState = useSetAppState();
+  const [, setAppState] = useAppState();
   const { camera } = useThree();
 
   React.useEffect(() => {

@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { Gltf } from "@react-three/drei";
 import { useAppState } from "../providers/state";
 import { InteractionManager } from "@/lib/interactions/types";
-import { useXR, useXRPlanes, XRHitTest, XRSpace } from "@react-three/xr";
+import { useXR, useXRPlanes, XRHitTest } from "@react-three/xr";
 import { PlaneDetectionManager } from "@/lib/interactions/PlaneDetectionManager";
 import { HitTestManager } from "@/lib/interactions/HitTestManager";
 import { Vector3 } from "three";
@@ -12,7 +12,7 @@ interface Props {
 }
 
 function InteractiveObjects({ interactionManager }: Props) {
-  const appState = useAppState();
+  const [appState] = useAppState();
   const { session } = useXR();
   const hitTestManager = useMemo(() => new HitTestManager(), []);
   const planeManager = useMemo(() => new PlaneDetectionManager(), []);
@@ -29,7 +29,7 @@ function InteractiveObjects({ interactionManager }: Props) {
       )}
 
       {appState.objects.map((object, index) => {
-        let transform = interactionManager.getObjectTransform(object);
+        const transform = interactionManager.getObjectTransform(object);
 
         // Only apply hit test if enabled
         if (

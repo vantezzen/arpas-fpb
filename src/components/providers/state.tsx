@@ -71,5 +71,12 @@ export function StateStorageProvider({
 }
 
 export function useAppState() {
-  return useContext(stateStorageContext).appState;
+  const ctx = useContext(stateStorageContext);
+
+  return [
+    ctx.appState,
+    (state: Partial<State>) => {
+      ctx.setAppState({ ...ctx.appState, ...state });
+    },
+  ] as const;
 }

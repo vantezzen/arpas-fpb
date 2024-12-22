@@ -3,6 +3,7 @@ import {
   InteractionState,
   InteractionConfig,
   InteractionManager,
+  InteractionMode,
 } from "./types";
 import { Object } from "@/components/providers/state";
 
@@ -16,7 +17,7 @@ export abstract class BaseInteractionManager implements InteractionManager {
   shouldSnapToPlane = this.config.usePlaneDetection;
   shouldSnapToHitTest = this.config.useHitTestSnapping;
 
-  constructor(protected config: InteractionConfig) {}
+  constructor(public config: InteractionConfig) {}
 
   onSelect(objectIndex: number) {
     this.state.selectedObject = objectIndex;

@@ -1,6 +1,6 @@
 import { HomerSModelessManager } from "@/lib/interactions/HomerSModelessManager";
 import InteractiveObjects from "../InteractiveObjects";
-import { ObjectSelector } from "../ObjectSelector";
+import ObjectSelector from "../ObjectSelector";
 import { useThree } from "@react-three/fiber";
 import { useFrame } from "@react-three/fiber";
 
@@ -23,7 +23,6 @@ function HomerSModelessScene() {
   return (
     <>
       <InteractiveObjects interactionManager={interactionManager} />
-      <ObjectSelector />
     </>
   );
 }

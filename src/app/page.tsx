@@ -2,6 +2,15 @@
 import { StateStorageProvider } from "@/components/providers/state";
 import React from "react";
 import dynamic from "next/dynamic";
+import { InteractionType } from "@/components/xr/Scene";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import ObjectSelector from "@/components/xr/ObjectSelector";
 
 const Scene = dynamic(
   () => import("@/components/xr/Scene").then((mod) => mod.default),
@@ -19,9 +28,36 @@ const Scene = dynamic(
 );
 
 function PuppetPage() {
+  const [interactionType, setInteractionType] =
+    React.useState<InteractionType>("homer-s");
+
   return (
     <StateStorageProvider>
-      <Scene interactionType="homer-s" />
+      <Select
+        value={interactionType}
+        onValueChange={(value) => setInteractionType(value as InteractionType)}
+      >
+        <SelectTrigger className="w-64">
+          <SelectValue>{interactionType}</SelectValue>
+        </SelectTrigger>
+
+        <SelectContent>
+          {[
+            "touch-modeful",
+            "touch-modeless",
+            "homer-s",
+            "homer-s-modeless",
+          ].map((type) => (
+            <SelectItem key={type} value={type}>
+              {type}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+
+      <Scene interactionType={interactionType} />
+
+      <ObjectSelector />
     </StateStorageProvider>
   );
 }

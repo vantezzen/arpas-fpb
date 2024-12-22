@@ -1,11 +1,10 @@
 import { Vector3 } from "three";
-import { useXRPlanes } from "@react-three/xr";
 
 export class PlaneDetectionManager {
-  private planes: XRPlane[] = [];
+  private planes: readonly XRPlane[] = [];
   private snapThreshold = 0.5; // meters
 
-  updatePlanes(newPlanes: XRPlane[]) {
+  updatePlanes(newPlanes: readonly XRPlane[]) {
     this.planes = newPlanes;
   }
 
@@ -16,7 +15,12 @@ export class PlaneDetectionManager {
     let closestDistance = Infinity;
 
     this.planes.forEach((plane) => {
-      const distance = position.distanceTo(plane.position);
+      const closestPoint = plane.polygon.reduce((closest, point) => {
+        const pointVector = new Vector3(point.x, point.y, point.z);
+        const distance = position.distanceTo(pointVector);
+        return distance < position.distanceTo(closest) ? pointVector : closest;
+      }, new Vector3(Infinity, Infinity, Infinity));
+      const distance = position.distanceTo(closestPoint);
       if (distance < closestDistance && distance < this.snapThreshold) {
         closestDistance = distance;
         closestPlane = plane;
@@ -29,7 +33,13 @@ export class PlaneDetectionManager {
   snapPositionToPlane(position: Vector3, plane: XRPlane): Vector3 {
     // Project position onto plane
     const snappedPosition = new Vector3().copy(position);
-    snappedPosition.y = plane.position.y;
+    const planeCenter = plane.polygon
+      .reduce((center, point) => {
+        center.add(new Vector3(point.x, point.y, point.z));
+        return center;
+      }, new Vector3())
+      .divideScalar(plane.polygon.length);
+    snappedPosition.y = planeCenter.y;
     return snappedPosition;
   }
 }

@@ -1,5 +1,4 @@
 import { Matrix4, Vector3 } from "three";
-import { XRHitTest, useXR } from "@react-three/xr";
 
 export class HitTestManager {
   private matrixHelper = new Matrix4();

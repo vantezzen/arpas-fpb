@@ -1,5 +1,5 @@
 import { BaseInteractionManager } from "./BaseInteractionManager";
-import { Vector2, Vector3, Euler } from "three";
+import { Vector2 } from "three";
 import { Object } from "@/components/providers/state";
 
 export class TouchInteractionManager extends BaseInteractionManager {

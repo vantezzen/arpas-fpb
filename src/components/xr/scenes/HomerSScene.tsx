@@ -1,7 +1,8 @@
 import { HomerSInteractionManager } from "@/lib/interactions/HomerSInteractionManager";
 import InteractiveObjects from "../InteractiveObjects";
 import { useXR } from "@react-three/xr";
-import { useThree } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
+import { useModeInManager } from "./ModeContext";
 
 const interactionManager = new HomerSInteractionManager({
   modeful: true,
@@ -20,6 +21,8 @@ function HomerSScene() {
       interactionManager.onInteractionMove({ camera });
     }
   });
+
+  useModeInManager(interactionManager);
 
   return <InteractiveObjects interactionManager={interactionManager} />;
 }
