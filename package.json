@@ -21,6 +21,7 @@
     "@radix-ui/react-slot": "^1.1.0",
     "@react-three/drei": "^9.119.0",
     "@react-three/fiber": "^9.0.0-alpha.8",
+    "@react-three/uikit": "^0.8.4",
     "@react-three/xr": "^6.4.12",
     "@types/three": "^0.170.0",
     "class-variance-authority": "^0.7.1",
@@ -38,7 +39,8 @@
     "tailwindcss-animate": "^1.0.7",
     "three": "^0.171.0",
     "tsx": "^4.19.2",
-    "vaul": "^1.1.1"
+    "vaul": "^1.1.1",
+    "zustand": "^5.0.2"
   },
   "devDependencies": {
     "@types/node": "^20",
