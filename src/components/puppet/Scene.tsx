@@ -1,12 +1,11 @@
 import React, { Suspense } from "react";
 import { Canvas } from "@react-three/fiber";
 import { XR } from "@react-three/xr";
-import Objects from "../xr/Objects";
-import SyncPlayerPosition from "../xr/SyncPlayerPosition";
 import ShowInteractions from "../ShowInteractions";
 import { xrstore } from "@/lib/xr";
 import "@react-three/fiber";
 import { Button } from "../ui/button";
+import Cube from "./Cube";
 
 declare module "@react-three/fiber" {
   interface ThreeElements {
@@ -37,13 +36,12 @@ function Scene() {
           fov: 75,
         }}
       >
-        <XR store={xrstore} referenceSpace="local">
+        <XR store={xrstore}>
           <Suspense fallback={null}>
             <ambientLight intensity={0.5} />
             <directionalLight position={[1, 1, 1]} intensity={1} />
 
-            <Objects />
-            <SyncPlayerPosition />
+            <Cube />
           </Suspense>
         </XR>
       </Canvas>

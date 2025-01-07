@@ -5,6 +5,16 @@ export default function HomePage() {
   return (
     <main style={{ padding: 20 }}>
       <h1>AR Prototypes</h1>
+
+      <p>Choose a prototype:</p>
+      <ul>
+        <li>
+          <Link href="/wizard">Wizard</Link>
+        </li>
+        <li>
+          <Link href="/puppet">Puppet</Link>
+        </li>
+      </ul>
       <p>Choose a prototype:</p>
       <ul>
         <li>
