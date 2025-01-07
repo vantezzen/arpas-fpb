@@ -62,7 +62,7 @@ export function StateStorageProvider({
     <stateStorageContext.Provider
       value={{
         appState,
-        setAppState: setAppState,
+        setAppState,
       }}
     >
       {children}
