@@ -1,10 +1,12 @@
-// app/ar/[prototypeId]/page.tsx
 "use client";
 
 import { useParams } from "next/navigation";
+import { notFound } from "next/navigation";
+import { ARScene } from "@/components/ARScene";
+import { InteractionManager } from "@/components/InteractionManager";
 import { getInteractionControllerById } from "@/interactions/getInteractionControllerById";
-import { ARScene, xrstore } from "@/components/ARScene";
-import { Button } from "@/components/ui/button";
+import { Toolbar } from "@/components/StaticHudToolbar"; // a small UI for modeful
+import { EnterARButton } from "@/components/EnterArButton";
 
 export default function ArPrototypePage() {
   const params = useParams();
@@ -12,23 +14,15 @@ export default function ArPrototypePage() {
 
   const InteractionClass = getInteractionControllerById(prototypeId);
   if (!InteractionClass) {
-    return <p>Prototype not found: {prototypeId}</p>;
+    notFound();
   }
 
-  const handleEnterAR = async () => {
-    try {
-      await xrstore.enterAR();
-      console.log("Entered AR session.");
-    } catch (err) {
-      console.error("Failed to enter AR:", err);
-    }
-  };
+  const isModeful = prototypeId.includes("modeful");
 
   return (
     <div style={{ width: "100vw", height: "100vh", position: "relative" }}>
-      <Button onClick={handleEnterAR}>Enter AR</Button>
-
-      <ARScene interactionControllerClass={InteractionClass} />
+      <EnterARButton />
+      <ARScene interactionClass={InteractionClass!} />
     </div>
   );
 }

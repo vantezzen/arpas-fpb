@@ -1,103 +1,63 @@
 // interactions/modeful-device.ts
 import { IInteractionController } from "./base-interaction";
 import { ThreeEvent, RootState } from "@react-three/fiber";
-import { Vector3, Quaternion, Euler, Object3D } from "three";
 import { store } from "@/hooks/useSceneObjects";
 import { getCurrentMode } from "@/store/uiStore";
+import { Vector3, Quaternion, Euler } from "three";
 
-/**
- * Modeful Device-based HOMER-S
- * "move": object is pinned to camera at a fixed local offset
- * "rotate": object orientation is controlled by device orientation changes
- * "scale": done by vertical drag or pinch
- */
 export class ModefulDeviceController implements IInteractionController {
   private selectedObjectId: string | null = null;
 
-  // For "move":
-  private refLocalOffset = new Vector3(); // local offset from camera
   private refCamPos = new Vector3();
   private refCamQuat = new Quaternion();
-  private refObjPos = new Vector3();
+  private refLocalOffset = new Vector3();
   private refObjRot = new Euler();
 
-  // For scale drag
   private isScaling = false;
   private lastPointerY = 0;
 
-  onInit() {}
-  onDispose() {}
+  onInit() {
+    // Nothing special
+  }
+
+  onDispose() {
+    // Nothing special
+  }
 
   onPointerDown(
     e: ThreeEvent<PointerEvent>,
-    object3D?: Object3D,
+    object3D?: THREE.Object3D,
     objectId?: string
   ) {
     e.stopPropagation();
-
     if (!objectId) {
-      // Tapped empty space => deselect
       this.selectedObjectId = null;
       return;
     }
-
     this.selectedObjectId = objectId;
 
-    // We'll store the camera transform
     const state = (globalThis as any).storeRootState as RootState;
     state.camera.getWorldPosition(this.refCamPos);
     state.camera.getWorldQuaternion(this.refCamQuat);
 
-    // Also store the object transform
     const obj = store
       .getState()
       .objects.find((o) => o.id === this.selectedObjectId);
     if (!obj) return;
 
-    this.refObjPos.copy(obj.position);
+    // local offset for "move"
+    const camQuatInv = this.refCamQuat.clone().invert();
+    const delta = obj.position
+      .clone()
+      .sub(this.refCamPos)
+      .applyQuaternion(camQuatInv);
+    this.refLocalOffset.copy(delta);
+
+    // store rotation
     this.refObjRot.set(obj.rotation.x, obj.rotation.y, obj.rotation.z);
 
-    // For "move", compute localOffset in camera space
-    // localOffset = inv(camQuat) * (objPos - camPos)
-    const objPosWorld = new Vector3().copy(obj.position);
-    const camPosWorld = this.refCamPos.clone();
-    const camQuatInv = this.refCamQuat.clone().invert();
-    const delta = objPosWorld.sub(camPosWorld);
-    this.refLocalOffset.copy(delta.applyQuaternion(camQuatInv));
-
-    // For scale if user drags pointer
     this.lastPointerY = e.screenY;
     this.isScaling = false;
-  }
-
-  onPointerMove(
-    e: ThreeEvent<PointerEvent>,
-    object3D?: Object3D,
-    objectId?: string
-  ) {
-    e.stopPropagation();
-    if (!this.selectedObjectId) return;
-
-    // If we're in "scale" mode, do vertical-drag scale
-    const mode = getCurrentMode(); // "move" | "rotate" | "scale"
-    if (mode === "scale") {
-      this.isScaling = true;
-      const obj = store
-        .getState()
-        .objects.find((o) => o.id === this.selectedObjectId);
-      if (!obj) return;
-
-      const deltaY = e.screenY - this.lastPointerY;
-      this.lastPointerY = e.screenY;
-
-      const scaleFactor = 0.001;
-      const newScale = obj.scale + -deltaY * scaleFactor;
-      obj.scale = Math.max(0.05, newScale);
-
-      store.getState().updateObject(this.selectedObjectId, {
-        scale: obj.scale,
-      });
-    }
   }
 
   onPointerUp(e: ThreeEvent<PointerEvent>) {
@@ -107,13 +67,8 @@ export class ModefulDeviceController implements IInteractionController {
 
   onFrame(dt: number) {
     if (!this.selectedObjectId) return;
-    const mode = getCurrentMode();
-    if (mode === "scale" && this.isScaling) {
-      // scale is handled in pointer move
-      return;
-    }
+    const mode = getCurrentMode(); // "move" | "rotate" | "scale"
 
-    // We'll do "move" or "rotate" in device-based
     const obj = store
       .getState()
       .objects.find((o) => o.id === this.selectedObjectId);
@@ -126,31 +81,44 @@ export class ModefulDeviceController implements IInteractionController {
     state.camera.getWorldQuaternion(curCamQuat);
 
     if (mode === "move") {
-      // objectPos = curCamPos + curCamQuat * refLocalOffset
+      // pinned offset
       const localToWorld = this.refLocalOffset
         .clone()
         .applyQuaternion(curCamQuat);
-      const newObjPos = curCamPos.clone().add(localToWorld);
-      obj.position.copy(newObjPos);
-
+      obj.position.copy(curCamPos).add(localToWorld);
       store.getState().updateObject(this.selectedObjectId, {
         position: obj.position,
       });
     } else if (mode === "rotate") {
-      // We'll rotate the object based on how the camera changed orientation
-      // deltaQ = refCamQuat^-1 * curCamQuat
+      // orientation delta
       const refCamQuatInv = this.refCamQuat.clone().invert();
       const deltaQ = refCamQuatInv.multiply(curCamQuat);
-
-      // Convert deltaQ to Euler, apply to object's ref rotation
       const eul = new Euler().setFromQuaternion(deltaQ, "YXZ");
-      // Let's only apply Y for a simpler approach
-      const newY = this.refObjRot.y + eul.y;
-      obj.rotation.set(this.refObjRot.x, newY, this.refObjRot.z);
-
+      obj.rotation.y = this.refObjRot.y + eul.y;
       store.getState().updateObject(this.selectedObjectId, {
         rotation: obj.rotation,
       });
     }
+    // scale is done by pointerMove in doc-based or by onPointerDown => we can do a simple pointer drag if we want
+  }
+
+  /** We can still do a simple vertical drag for scale if we want pointer-based scale. */
+  onPointerMove(e: ThreeEvent<PointerEvent>) {
+    const mode = getCurrentMode();
+    if (mode !== "scale") return;
+    if (!this.selectedObjectId) return;
+
+    const obj = store
+      .getState()
+      .objects.find((o) => o.id === this.selectedObjectId);
+    if (!obj) return;
+
+    const deltaY = e.screenY - this.lastPointerY;
+    this.lastPointerY = e.screenY;
+
+    const scaleFactor = 0.001;
+    obj.scale = Math.max(0.05, obj.scale + -deltaY * scaleFactor);
+
+    store.getState().updateObject(this.selectedObjectId, { scale: obj.scale });
   }
 }

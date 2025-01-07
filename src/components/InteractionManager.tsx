@@ -1,7 +1,7 @@
 // components/InteractionManager.tsx
 "use client";
 
-import { useRef, useEffect } from "react";
+import React, { useRef, useEffect } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import { IInteractionController } from "@/interactions/base-interaction";
 
@@ -25,7 +25,6 @@ export function InteractionManager({
       (globalThis as any).storeActiveController = null;
       controllerRef.current = null;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [interactionClass]);
 
   useFrame((state, dt) => {

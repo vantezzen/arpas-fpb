@@ -5,7 +5,6 @@ import { ModefulDeviceController } from "./modeful-device";
 import { ModelessTouchController } from "./modeless-touch";
 import { ModelessDeviceController } from "./modeless-device";
 
-// We map the route param to the corresponding class
 export function getInteractionControllerById(
   prototypeId: string
 ): (new () => IInteractionController) | undefined {

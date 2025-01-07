@@ -13,7 +13,6 @@ export const useUiStore = create<UiState>((set) => ({
   setMode: (m) => set({ currentMode: m }),
 }));
 
-// Helper
 export function getCurrentMode() {
   return useUiStore.getState().currentMode;
 }
