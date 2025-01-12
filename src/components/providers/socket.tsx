@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import { State, stateStorageContext, useAppState } from "./state";
+import { Euler } from "three";
 
 const socketContext = createContext<Socket | null>(null);
 export default socketContext;
@@ -63,7 +64,13 @@ export function useSendAppState() {
 
   return (newState: Partial<State>) => {
     const mergedState = { ...appState, ...newState } as State;
-    console.log("Sending state to server", mergedState);
+    if (mergedState.objectRotation) {
+      mergedState.objectRotation = {
+        x: mergedState.objectRotation.x,
+        y: mergedState.objectRotation.y,
+        z: mergedState.objectRotation.z,
+      } as Euler;
+    }
 
     socket.emit("appState", mergedState);
   };

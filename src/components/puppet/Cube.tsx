@@ -22,6 +22,13 @@ function Cube() {
             appState.objectRotation.z
           )
         }
+        scale={
+          new Vector3(
+            appState.objectScale.x,
+            appState.objectScale.y,
+            appState.objectScale.z
+          )
+        }
       >
         <boxGeometry args={[1, 1, 1]} />
         <meshStandardMaterial color="orange" />

@@ -17,18 +17,11 @@ function WizardCube() {
       <TransformControls
         ref={transform}
         onObjectChange={(e: any) => {
-          console.log(
-            "TransformControls onObjectChange",
-            e.target,
-            transform.current
-          );
           sendAppState({
-            objectPosition: e.target.position,
-            objectRotation: e.target.rotation,
+            objectPosition: e.target.object.position,
+            objectRotation: e.target.object.rotation,
+            objectScale: e.target.object.scale,
           });
-        }}
-        onChange={(e: any) => {
-          console.log("TransformControls onChange", e);
         }}
         mode={mode}
       >

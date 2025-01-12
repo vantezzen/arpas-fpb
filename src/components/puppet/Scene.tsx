@@ -6,6 +6,7 @@ import { xrstore } from "@/lib/xr";
 import "@react-three/fiber";
 import { Button } from "../ui/button";
 import Cube from "./Cube";
+import SyncPlayerPosition from "./SyncPlayerPosition";
 
 declare module "@react-three/fiber" {
   interface ThreeElements {
@@ -42,6 +43,7 @@ function Scene() {
             <directionalLight position={[1, 1, 1]} intensity={1} />
 
             <Cube />
+            <SyncPlayerPosition />
           </Suspense>
         </XR>
       </Canvas>

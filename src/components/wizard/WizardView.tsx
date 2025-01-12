@@ -10,6 +10,7 @@ import { Button } from "../ui/button";
 import { RotateCcw } from "lucide-react";
 import WizardCube from "./WizardCube";
 import { ModeContextProvider } from "./ModeSelector";
+import Player from "./Player";
 
 declare module "@react-three/fiber" {
   interface ThreeElements {
@@ -55,6 +56,7 @@ function WizardView() {
               />
 
               <WizardCube />
+              <Player />
 
               <OrbitControls makeDefault />
             </Suspense>

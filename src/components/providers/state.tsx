@@ -4,6 +4,7 @@ import { Euler, Vector3 } from "three";
 export type State = {
   objectPosition: Vector3;
   objectRotation: Euler;
+  objectScale: Vector3;
 
   userPosition: Vector3;
   userRotation: Euler;
@@ -12,6 +13,7 @@ export type State = {
 const DEFAULT_STATE: State = {
   objectPosition: new Vector3(0, 0, 0),
   objectRotation: new Euler(0, 0, 0),
+  objectScale: new Vector3(1, 1, 1),
 
   userPosition: new Vector3(0, 0, 0),
   userRotation: new Euler(0, 0, 0),
