@@ -7,7 +7,7 @@ import { useMode } from "./ModeSelector";
 
 function WizardCube() {
   const sendAppState = useSendAppState();
-  const [appState, setAppState] = useAppState();
+  const [appState, setAppState, setUpdatesDisabled] = useAppState();
   const transform = useRef<any>();
 
   const [mode, setMode] = useMode();
@@ -24,6 +24,14 @@ function WizardCube() {
           });
         }}
         mode={mode}
+        onMouseDown={() => {
+          setUpdatesDisabled(true);
+          console.log("Mouse down");
+        }}
+        onMouseUp={() => {
+          setUpdatesDisabled(false);
+          console.log("Mouse up");
+        }}
       >
         <mesh ref={transform}>
           <boxGeometry args={[1, 1, 1]} />

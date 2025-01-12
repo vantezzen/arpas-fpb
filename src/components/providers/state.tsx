@@ -22,9 +22,11 @@ const DEFAULT_STATE: State = {
 export const stateStorageContext = createContext<{
   appState: State;
   setAppState: (state: State) => void;
+  setUpdatesDisabled: (disabled: boolean) => void;
 }>({
   appState: DEFAULT_STATE,
   setAppState: () => {},
+  setUpdatesDisabled: () => {},
 });
 
 export function StateStorageProvider({
@@ -33,12 +35,22 @@ export function StateStorageProvider({
   children: React.ReactNode;
 }) {
   const [appState, setAppState] = useState<State>(DEFAULT_STATE);
+  const [updatesDisabled, setUpdatesDisabled] = useState(false);
 
   return (
     <stateStorageContext.Provider
       value={{
         appState,
-        setAppState,
+        setAppState: (state) => {
+          if (updatesDisabled) {
+            return;
+          }
+          setAppState(state);
+        },
+        setUpdatesDisabled: (disabled) => {
+          setUpdatesDisabled(disabled);
+          window.__wizard_disable_updates = disabled;
+        },
       }}
     >
       {children}
@@ -54,5 +66,6 @@ export function useAppState() {
     (state: Partial<State>) => {
       ctx.setAppState({ ...ctx.appState, ...state });
     },
+    ctx.setUpdatesDisabled,
   ] as const;
 }

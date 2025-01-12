@@ -41,6 +41,8 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
 
     const handler = (message: State) => {
       console.log("Received status message", message);
+
+      if (window.__wizard_disable_updates) return;
       setAppState(message);
     };
 
