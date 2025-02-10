@@ -1,4 +1,5 @@
 // app/page.tsx
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
 export default function HomePage() {
@@ -7,30 +8,50 @@ export default function HomePage() {
       <h1>AR Prototypes</h1>
 
       <p>Choose a prototype:</p>
-      <ul>
+      <ul className="grid gap-4">
         <li>
-          <Link href="/wizard">Wizard</Link>
+          <Button>
+            <Link href="/wizard">Wizard</Link>
+          </Button>
         </li>
         <li>
-          <Link href="/puppet">Puppet</Link>
-        </li>
-      </ul>
-      <p>Choose a prototype:</p>
-      <ul>
-        <li>
-          <Link href="/ar/modeful-touch">Modeful + Touch</Link>
-        </li>
-        <li>
-          <Link href="/ar/modeful-device">Modeful + Device (HOMER-S)</Link>
-        </li>
-        <li>
-          <Link href="/ar/modeless-touch">Modeless + Touch</Link>
-        </li>
-        <li>
-          <Link href="/ar/modeless-device">Modeless + Device (HOMER-S)</Link>
+          <Button>
+            <Link href="/puppet">Puppet</Link>
+          </Button>
         </li>
       </ul>
-      <p>Scan the corresponding QR code or just click the links above.</p>
+      <p>Prototypes v0:</p>
+      <ul className="grid gap-4">
+        <li>
+          <Button>
+            <Link href="/ar/modeful-touch">Modeful + Touch</Link>
+          </Button>
+        </li>
+        <li>
+          <Button>
+            <Link href="/ar/modeful-device">Modeful + Device (HOMER-S)</Link>
+          </Button>
+        </li>
+        <li>
+          <Button>
+            <Link href="/ar/modeless-touch">Modeless + Touch</Link>
+          </Button>
+        </li>
+        <li>
+          <Button>
+            <Link href="/ar/modeless-device">Modeless + Device (HOMER-S)</Link>
+          </Button>
+        </li>
+      </ul>
+
+      <p>Prototypes v1:</p>
+      <ul className="grid gap-4">
+        <li>
+          <Button>
+            <Link href="/proto/modeful-touch">Modeful + Touch</Link>
+          </Button>
+        </li>
+      </ul>
     </main>
   );
 }
