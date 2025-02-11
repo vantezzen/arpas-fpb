@@ -19,6 +19,11 @@ export default function HomePage() {
             <Link href="/puppet">Puppet</Link>
           </Button>
         </li>
+        <li>
+          <Button>
+            <Link href="/sockets">Socket Benchmark</Link>
+          </Button>
+        </li>
       </ul>
       <p>Prototypes v0:</p>
       <ul className="grid gap-4">

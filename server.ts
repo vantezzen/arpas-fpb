@@ -18,6 +18,10 @@ app.prepare().then(() => {
     socket.on("appState", (message) => {
       io.except(socket.id).emit("appState", message);
     });
+
+    socket.on("ping", (message) => {
+      socket.emit("pong", message);
+    });
   });
 
   httpServer
