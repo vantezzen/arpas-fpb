@@ -25,8 +25,23 @@ export default function HomePage() {
           </Button>
         </li>
       </ul>
-      <p>Prototypes v0:</p>
+
+      <p>Prototypes v1:</p>
       <ul className="grid gap-4">
+        <li>
+          <Button>
+            <Link href="/proto/modeful-touch">Modeful + Touch</Link>
+          </Button>
+        </li>
+        <li>
+          <Button>
+            <Link href="/proto/modeless-touch">Modeless + Touch</Link>
+          </Button>
+        </li>
+      </ul>
+
+      <p>Prototypes v0:</p>
+      <ul className="grid gap-4 opacity-50">
         <li>
           <Button>
             <Link href="/ar/modeful-touch">Modeful + Touch</Link>
@@ -45,15 +60,6 @@ export default function HomePage() {
         <li>
           <Button>
             <Link href="/ar/modeless-device">Modeless + Device (HOMER-S)</Link>
-          </Button>
-        </li>
-      </ul>
-
-      <p>Prototypes v1:</p>
-      <ul className="grid gap-4">
-        <li>
-          <Button>
-            <Link href="/proto/modeful-touch">Modeful + Touch</Link>
           </Button>
         </li>
       </ul>
