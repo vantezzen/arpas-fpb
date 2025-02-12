@@ -11,6 +11,8 @@ export default class ModefulTouchInteraction implements Interaction {
   private prevTouchX: number | null = null;
   private prevTouchY: number | null = null;
 
+  private prevDistance: number | null = null;
+
   onCameraMove(cameraPosition: Vector3, cameraRotation: Euler) {
     this.cameraPosition.copy(cameraPosition);
     this.cameraRotation.copy(cameraRotation);
@@ -44,12 +46,17 @@ export default class ModefulTouchInteraction implements Interaction {
       this.prevTouchY = null;
       this.currentTouchPoints = [];
     }
+    this.prevDistance = null;
   }
 
   private handleUpdate(nextTouchPoints?: Touch[]) {
     const mode = useUiStore.getState().currentMode;
     if (mode === "move") {
       this.onMove(nextTouchPoints);
+    } else if (mode === "scale") {
+      this.onScale(nextTouchPoints);
+    } else if (mode === "rotate") {
+      this.onRotate(nextTouchPoints);
     }
   }
 
@@ -124,5 +131,54 @@ export default class ModefulTouchInteraction implements Interaction {
 
     // 9) Update store
     state.setCubePosition(newPos);
+  }
+
+  onScale(nextTouchPoints?: Touch[]) {
+    const touchPoints = nextTouchPoints || this.currentTouchPoints;
+    const prevDistance = this.prevDistance;
+    if (touchPoints.length < 2) return;
+
+    // Calculate the distance between the two touch points
+    const touch1 = touchPoints[0];
+    const touch2 = touchPoints[1];
+    const dx = touch1.clientX - touch2.clientX;
+    const dy = touch1.clientY - touch2.clientY;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    this.prevDistance = distance;
+
+    if (prevDistance === null) return;
+
+    const distanceDelta = distance - prevDistance;
+    const state = useUiStore.getState();
+
+    const scale = state.cubeScale;
+    const newScale = new Vector3(
+      scale.x + distanceDelta * 0.01,
+      scale.y + distanceDelta * 0.01,
+      scale.z + distanceDelta * 0.01
+    );
+
+    state.setCubeScale(newScale);
+  }
+
+  onRotate(nextTouchPoints?: Touch[]) {
+    const touchPoints = nextTouchPoints || this.currentTouchPoints;
+    if (touchPoints.length < 1) return;
+    if (this.prevTouchX === null || this.prevTouchY === null) return;
+
+    const touch = touchPoints[0];
+    const state = useUiStore.getState();
+    const rotation = state.cubeRotation;
+
+    const distanceX = touch.clientX - this.prevTouchX;
+    const distanceY = touch.clientY - this.prevTouchY;
+
+    const newRotation = new Euler(
+      rotation.x + distanceY * 0.01,
+      rotation.y + distanceX * 0.01,
+      rotation.z
+    );
+
+    state.setCubeRotation(newRotation);
   }
 }
