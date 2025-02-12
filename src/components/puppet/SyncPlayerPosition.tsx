@@ -1,7 +1,6 @@
 import { useFrame } from "@react-three/fiber";
-import React, { useRef } from "react";
+import { useRef } from "react";
 import { Euler, Quaternion, Vector3 } from "three";
-import { useDebounce, useInterval, useUpdate } from "react-use";
 import { useSendAppState } from "../providers/socket";
 
 function SyncPlayerPosition() {

@@ -3,7 +3,6 @@
 import { IInteractionController } from "./base-interaction";
 import { ThreeEvent } from "@react-three/fiber";
 import { store } from "@/hooks/useSceneObjects";
-import { Vector3, Euler } from "three";
 
 /**
  * The ModelessTouchController implements "modeless" manipulation for a single selected object:

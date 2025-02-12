@@ -1,8 +1,7 @@
-import React, { useEffect, useRef } from "react";
+import React, { useRef } from "react";
 import { useSendAppState } from "../providers/socket";
 import { useAppState } from "../providers/state";
 import { TransformControls } from "@react-three/drei";
-import { Euler, Vector3 } from "three";
 import { useMode } from "./ModeSelector";
 
 function WizardCube() {

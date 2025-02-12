@@ -1,7 +1,8 @@
 import { useUiStore } from "@/store/uiStore";
 import { Euler, Quaternion, Vector3 } from "three";
+import Interaction from "../Interaction";
 
-export default class ModefulTouchInteraction {
+export default class ModefulTouchInteraction implements Interaction {
   private currentTouchPoints: Touch[] = [];
 
   private cameraPosition = new Vector3();
@@ -9,12 +10,6 @@ export default class ModefulTouchInteraction {
 
   private prevTouchX: number | null = null;
   private prevTouchY: number | null = null;
-
-  constructor() {
-    document.addEventListener("touchstart", this.onTouchStart.bind(this));
-    document.addEventListener("touchmove", this.onTouchMove.bind(this));
-    document.addEventListener("touchend", this.onTouchEnd.bind(this));
-  }
 
   onCameraMove(cameraPosition: Vector3, cameraRotation: Euler) {
     this.cameraPosition.copy(cameraPosition);

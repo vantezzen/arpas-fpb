@@ -3,7 +3,6 @@
 
 import { Root, Container, Text } from "@react-three/uikit";
 import { useUiStore } from "@/store/uiStore";
-import { Vector3 } from "three";
 
 /**
  * A 3D toolbar using react-three/uikit, displayed about 1 meter in front

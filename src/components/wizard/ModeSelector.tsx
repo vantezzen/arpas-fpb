@@ -1,6 +1,6 @@
 import React from "react";
 import { Button } from "../ui/button";
-import { CircleOff, Expand, Move3D, RefreshCcw, Rotate3D } from "lucide-react";
+import { Expand, Move3D, Rotate3D } from "lucide-react";
 
 const modes = [
   {

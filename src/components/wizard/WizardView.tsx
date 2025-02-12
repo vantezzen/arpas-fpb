@@ -1,13 +1,7 @@
-import React, { Suspense, useRef } from "react";
+import React, { Suspense } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Grid, PerspectiveCamera } from "@react-three/drei";
-import WizardObjects from "./WizardObjects";
-import WizardControls from "./WizardControls";
-import WizardUserPosition from "./WizardUserPosition";
-import * as THREE from "three";
 import "@react-three/fiber";
-import { Button } from "../ui/button";
-import { RotateCcw } from "lucide-react";
 import WizardCube from "./WizardCube";
 import { ModeContextProvider } from "./ModeSelector";
 import Player from "./Player";

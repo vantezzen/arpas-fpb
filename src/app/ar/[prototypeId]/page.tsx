@@ -3,9 +3,8 @@
 import { useParams } from "next/navigation";
 import { notFound } from "next/navigation";
 import { ARScene } from "@/components/ARScene";
-import { InteractionManager } from "@/components/InteractionManager";
 import { getInteractionControllerById } from "@/interactions/getInteractionControllerById";
-import { Toolbar } from "@/components/StaticHudToolbar"; // a small UI for modeful
+// a small UI for modeful
 import { EnterARButton } from "@/components/EnterArButton";
 
 export default function ArPrototypePage() {

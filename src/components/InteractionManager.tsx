@@ -1,8 +1,8 @@
 // components/InteractionManager.tsx
 "use client";
 
-import React, { useRef, useEffect } from "react";
-import { useFrame, useThree } from "@react-three/fiber";
+import { useRef, useEffect } from "react";
+import { useFrame } from "@react-three/fiber";
 import { IInteractionController } from "@/interactions/base-interaction";
 
 interface InteractionManagerProps {

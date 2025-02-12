@@ -1,6 +1,6 @@
 import React from "react";
 import { useAppState } from "../providers/state";
-import { Triangle, Vector3 } from "three";
+import { Vector3 } from "three";
 import { Euler } from "three";
 import { Gltf } from "@react-three/drei";
 

@@ -3,7 +3,6 @@ import { IInteractionController } from "./base-interaction";
 import { ThreeEvent } from "@react-three/fiber";
 import { store } from "@/hooks/useSceneObjects";
 import { getCurrentMode } from "@/store/uiStore";
-import { Vector2 } from "three";
 
 /**
  * A doc-based approach for a Modeful (move/rotate/scale) prototype using single-finger deltas.
