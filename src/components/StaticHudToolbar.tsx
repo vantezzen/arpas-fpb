@@ -1,101 +1,116 @@
 // components/StaticHudToolbar.tsx
 "use client";
 
-import { useRef, useEffect } from "react";
-import { useThree } from "@react-three/fiber";
-import { Group } from "three";
 import { Root, Container, Text } from "@react-three/uikit";
 import { useUiStore } from "@/store/uiStore";
 
-/**
- * A "static" 3D UI toolbar using @react-three/uikit,
- * always in front of the user's camera (a HUD).
- */
-export function StaticHudToolbar() {
-  const { camera } = useThree();
-  const groupRef = useRef<Group>(null);
+import { Card } from "@react-three/uikit-apfel";
+import { Tabs, TabsButton } from "@react-three/uikit-apfel";
+import { Billboard } from "@react-three/drei";
+import { useFrame, useThree } from "@react-three/fiber";
+import { useRef } from "react";
+import * as THREE from "three";
 
+export function StaticHudToolbar() {
   const currentMode = useUiStore((s) => s.currentMode);
   const setMode = useUiStore((s) => s.setMode);
 
-  /**
-   * 1) On mount, we parent the <group> to the camera.
-   *    This means the entire group (and our <Root> inside it)
-   *    will move with the user's head in AR.
-   */
-  useEffect(() => {
-    if (!groupRef.current) return;
-    camera.add(groupRef.current);
-    return () => {
-      camera.remove(groupRef.current!);
-    };
-  }, [camera]);
+  const { camera } = useThree();
+  const uiRef = useRef<THREE.Group>();
+
+  useFrame(() => {
+    if (!uiRef.current) return;
+
+    const distance = 8;
+    const forward = new THREE.Vector3();
+    camera.getWorldDirection(forward);
+    const targetPosition = camera.position
+      .clone()
+      .add(forward.multiplyScalar(distance));
+
+    targetPosition.y -= 3;
+
+    uiRef.current.position.copy(targetPosition);
+    uiRef.current.lookAt(camera.position);
+  });
 
   return (
-    /**
-     * 2) The <group> is our hook into position/rotation in 3D space.
-     *    We'll place it slightly in front of the camera.
-     */
-    <group ref={groupRef} position={[0, -0.4, -1]}>
-      {/**
-       * 3) The <Root> from @react-three/uikit is placed inside the group.
-       *    "sizeX"/"sizeY" define how large it is in world units (meters).
-       *    "anchorX"/"anchorY" define where the layout anchors relative to (0,0).
-       */}
-      <Root
-        sizeX={0.8}
-        sizeY={0.2}
-        anchorX="center"
-        anchorY="bottom"
-        backgroundColor="#333"
-        borderRadius={0.02}
-        padding={0.02}
-        flexDirection="row"
-        justifyContent="space-evenly"
-        // no "position" prop on Root
-      >
-        <Container
-          flexGrow={1}
-          backgroundColor={currentMode === "move" ? "#4caf50" : "#666"}
-          borderRadius={0.01}
-          alignItems="center"
-          justifyContent="center"
-          onClick={() => setMode("move")}
-          marginX={0.01}
+    <Billboard ref={uiRef}>
+      <Root anchorX="center" anchorY="top">
+        <Card
+          borderRadius={32}
+          padding={16}
+          flexDirection="column"
+          alignItems="flex-start"
+          gapRow={16}
         >
-          <Text color="white" fontSize={0.05}>
-            Move
-          </Text>
-        </Container>
-
-        <Container
-          flexGrow={1}
-          backgroundColor={currentMode === "rotate" ? "#4caf50" : "#666"}
-          borderRadius={0.01}
-          alignItems="center"
-          justifyContent="center"
-          onClick={() => setMode("rotate")}
-          marginX={0.01}
-        >
-          <Text color="white" fontSize={0.05}>
-            Rotate
-          </Text>
-        </Container>
-
-        <Container
-          flexGrow={1}
-          backgroundColor={currentMode === "scale" ? "#4caf50" : "#666"}
-          borderRadius={0.01}
-          alignItems="center"
-          justifyContent="center"
-          onClick={() => setMode("scale")}
-          marginX={0.01}
-        >
-          <Text color="white" fontSize={0.05}>
-            Scale
-          </Text>
-        </Container>
+          <Tabs value={currentMode} onValueChange={setMode}>
+            <TabsButton value="move">
+              <Text>Move</Text>
+            </TabsButton>
+            <TabsButton value="rotate">
+              <Text>Rotate</Text>
+            </TabsButton>
+            <TabsButton value="scale">
+              <Text>Scale</Text>
+            </TabsButton>
+          </Tabs>
+        </Card>
       </Root>
-    </group>
+    </Billboard>
+  );
+
+  return (
+    <Root
+      anchorX="center"
+      anchorY="bottom"
+      backgroundColor="#333"
+      borderRadius={0.02}
+      padding={0.02}
+      flexDirection="row"
+      justifyContent="space-evenly"
+    >
+      <Container
+        flexGrow={1}
+        backgroundColor={currentMode === "move" ? "#4caf50" : "#666"}
+        borderRadius={0.01}
+        alignItems="center"
+        justifyContent="center"
+        onClick={() => setMode("move")}
+        marginX={0.01}
+      >
+        <Text color="white" fontSize={0.05}>
+          Move
+        </Text>
+      </Container>
+
+      <Container
+        flexGrow={1}
+        backgroundColor={currentMode === "rotate" ? "#4caf50" : "#666"}
+        borderRadius={0.01}
+        alignItems="center"
+        justifyContent="center"
+        onClick={() => setMode("rotate")}
+        marginX={0.01}
+      >
+        <Text color="white" fontSize={0.05}>
+          Rotate
+        </Text>
+      </Container>
+
+      <Container
+        flexGrow={1}
+        backgroundColor={currentMode === "scale" ? "#4caf50" : "#666"}
+        borderRadius={0.01}
+        alignItems="center"
+        justifyContent="center"
+        onClick={() => setMode("scale")}
+        marginX={0.01}
+      >
+        <Text color="white" fontSize={0.05}>
+          Scale
+        </Text>
+      </Container>
+    </Root>
   );
 }

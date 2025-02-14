@@ -15,6 +15,7 @@ export default class ModelessTouchInteraction implements Interaction {
 
   private prevAngle: number | null = null;
   private distanceDelta: number | null = null;
+  private prevCenterPoint: Vector3 | null = null;
 
   onCameraMove(cameraPosition: Vector3, cameraRotation: Euler) {
     this.cameraPosition.copy(cameraPosition);
@@ -51,6 +52,7 @@ export default class ModelessTouchInteraction implements Interaction {
     }
     this.prevDistance = null;
     this.prevAngle = null;
+    this.prevCenterPoint = null;
   }
 
   private handleUpdate(nextTouchPoints?: Touch[]) {
@@ -159,19 +161,28 @@ export default class ModelessTouchInteraction implements Interaction {
     const state = useUiStore.getState();
     const rotation = state.cubeRotation;
 
-    const yRotation = rotation.y + angleDelta;
+    const yRotation = rotation.y - angleDelta;
 
     // Move both: X and Z rotation
     const prevTouchPoints = this.currentTouchPoints;
     let xRotation = rotation.x;
     let zRotation = rotation.z;
-    if (this.distanceDelta && this.distanceDelta < 10 && angleDelta < 0.1) {
-      const touch = prevTouchPoints[0];
-      const distanceX = touch.clientX - this.prevTouchX;
-      const distanceY = touch.clientY - this.prevTouchY;
 
-      xRotation = rotation.x + distanceY * 0.01;
-      zRotation = rotation.z + distanceX * 0.01;
+    const centerPoint = new Vector3(
+      (touch1.clientX + touch2.clientX) / 2,
+      (touch1.clientY + touch2.clientY) / 2,
+      0
+    );
+    const prevCenterPoint = this.prevCenterPoint;
+    this.prevCenterPoint = centerPoint;
+
+    if (prevCenterPoint) {
+      const centerPointDelta = new Vector3().subVectors(
+        centerPoint,
+        prevCenterPoint
+      );
+      xRotation = rotation.x + centerPointDelta.y * 0.01;
+      zRotation = rotation.z - centerPointDelta.x * 0.01;
     }
 
     // Update state
