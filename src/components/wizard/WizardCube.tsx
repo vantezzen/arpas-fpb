@@ -6,10 +6,10 @@ import { useMode } from "./ModeSelector";
 
 function WizardCube() {
   const sendAppState = useSendAppState();
-  const [appState, setAppState, setUpdatesDisabled] = useAppState();
+  const [, , setUpdatesDisabled] = useAppState();
   const transform = useRef<any>();
 
-  const [mode, setMode] = useMode();
+  const [mode] = useMode();
 
   return (
     <>

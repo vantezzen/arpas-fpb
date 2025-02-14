@@ -14,7 +14,6 @@ export default class ModelessTouchInteraction implements Interaction {
   private prevDistance: number | null = null;
 
   private prevAngle: number | null = null;
-  private distanceDelta: number | null = null;
   private prevCenterPoint: Vector3 | null = null;
 
   onCameraMove(cameraPosition: Vector3, cameraRotation: Euler) {
@@ -131,7 +130,6 @@ export default class ModelessTouchInteraction implements Interaction {
 
     const distanceDelta = distance - prevDistance;
     const state = useUiStore.getState();
-    this.distanceDelta = distanceDelta;
 
     const scale = state.cubeScale;
     const newScale = new Vector3(
@@ -168,7 +166,6 @@ export default class ModelessTouchInteraction implements Interaction {
     const yRotation = rotation.y - angleDelta;
 
     // Move both: X and Z rotation
-    const prevTouchPoints = this.currentTouchPoints;
     let xRotation = rotation.x;
     let zRotation = rotation.z;
 
