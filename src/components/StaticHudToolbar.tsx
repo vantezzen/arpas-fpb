@@ -12,6 +12,7 @@ import { useRef } from "react";
 import * as THREE from "three";
 
 export function StaticHudToolbar() {
+  const debugMessage = useUiStore((s) => s.debugMessage);
   const currentMode = useUiStore((s) => s.currentMode);
   const setMode = useUiStore((s) => s.setMode);
 
@@ -55,6 +56,8 @@ export function StaticHudToolbar() {
               <Text>Scale</Text>
             </TabsButton>
           </Tabs>
+
+          <Text>{debugMessage ?? ""}</Text>
         </Card>
       </Root>
     </Billboard>

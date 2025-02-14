@@ -45,6 +45,10 @@ export default class ModelessTouchInteraction implements Interaction {
     }
   }
   onTouchEnd(event: TouchEvent) {
+    const nextTouchPoints = Array.from(event.touches);
+    this.handleUpdate(nextTouchPoints);
+    this.currentTouchPoints = nextTouchPoints;
+
     if (this.currentTouchPoints.length === 0) {
       this.prevTouchX = null;
       this.prevTouchY = null;

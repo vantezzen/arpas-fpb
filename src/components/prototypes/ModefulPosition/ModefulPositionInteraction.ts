@@ -2,7 +2,7 @@ import { useUiStore } from "@/store/uiStore";
 import { Euler, Quaternion, Vector3 } from "three";
 import Interaction from "../Interaction";
 
-export default class ModefulTouchInteraction implements Interaction {
+export default class ModefulPositionInteraction implements Interaction {
   private currentTouchPoints: Touch[] = [];
 
   private cameraPosition = new Vector3();
@@ -11,7 +11,10 @@ export default class ModefulTouchInteraction implements Interaction {
   private prevTouchX: number | null = null;
   private prevTouchY: number | null = null;
 
-  private prevDistance: number | null = null;
+  private currentDistance: number | null = null;
+
+  private prevTiltAngle: number | null = null;
+  private prevRotation: Euler | null = null;
 
   onCameraMove(cameraPosition: Vector3, cameraRotation: Euler) {
     this.cameraPosition.copy(cameraPosition);
@@ -48,9 +51,9 @@ export default class ModefulTouchInteraction implements Interaction {
     if (this.currentTouchPoints.length === 0) {
       this.prevTouchX = null;
       this.prevTouchY = null;
+
       this.currentTouchPoints = [];
     }
-    this.prevDistance = null;
   }
 
   private handleUpdate(nextTouchPoints?: Touch[]) {
@@ -66,92 +69,81 @@ export default class ModefulTouchInteraction implements Interaction {
 
   onMove(nextTouchPoints?: Touch[]) {
     const touchPoints = nextTouchPoints || this.currentTouchPoints;
-    if (touchPoints.length === 0) return;
-
-    // See comments in ModelessTouchInteraction.ts for the logic breakdown.
+    if (touchPoints.length === 0 || this.prevTouchY === null) return;
     const currentTouch = touchPoints[0];
-    if (this.prevTouchX === null || this.prevTouchY === null) return;
-
-    const deltaX = currentTouch.clientX - this.prevTouchX;
     const deltaY = currentTouch.clientY - this.prevTouchY;
-    const state = useUiStore.getState();
-    const objectPosition = state.cubePosition.clone();
 
+    const objectPosition = useUiStore.getState().cubePosition;
+
+    if (this.currentDistance === null) {
+      const distanceObjectToCamera = objectPosition.distanceTo(
+        this.cameraPosition
+      );
+      this.currentDistance = distanceObjectToCamera;
+    }
+    this.currentDistance -= deltaY * 0.1;
+
+    // Project camera viewpoint with "this.currentDistance" to get the new object position
     const cameraQuat = new Quaternion().setFromEuler(this.cameraRotation);
     const cameraForward = new Vector3(0, 0, -1).applyQuaternion(cameraQuat);
-
-    cameraForward.y = 0;
     cameraForward.normalize();
 
-    const worldUp = new Vector3(0, 1, 0);
-    const cameraRight = new Vector3().crossVectors(cameraForward, worldUp);
-    cameraRight.normalize();
-
-    const cameraFlatPos = new Vector3(
-      this.cameraPosition.x,
-      objectPosition.y,
-      this.cameraPosition.z
-    );
-
-    const offset = new Vector3().subVectors(objectPosition, cameraFlatPos);
-    const distForward = offset.dot(cameraForward);
-    const distRight = offset.dot(cameraRight);
-    const moveScale = 0.01;
-    const newDistForward = distForward - deltaY * moveScale;
-    const newDistRight = distRight + deltaX * moveScale;
-
-    const newPos = cameraFlatPos
+    const newObjectPosition = this.cameraPosition
       .clone()
-      .add(cameraForward.clone().multiplyScalar(newDistForward))
-      .add(cameraRight.clone().multiplyScalar(newDistRight));
+      .add(cameraForward.multiplyScalar(this.currentDistance));
 
-    state.setCubePosition(newPos);
+    useUiStore.getState().setCubePosition(newObjectPosition);
   }
 
   onScale(nextTouchPoints?: Touch[]) {
     const touchPoints = nextTouchPoints || this.currentTouchPoints;
-    const prevDistance = this.prevDistance;
-    if (touchPoints.length < 2) return;
+    if (touchPoints.length === 0) return;
 
-    // Calculate the distance between the two touch points
-    const touch1 = touchPoints[0];
-    const touch2 = touchPoints[1];
-    const dx = touch1.clientX - touch2.clientX;
-    const dy = touch1.clientY - touch2.clientY;
-    const distance = Math.sqrt(dx * dx + dy * dy);
-    this.prevDistance = distance;
-
-    if (prevDistance === null) return;
-
-    const distanceDelta = distance - prevDistance;
+    // Use rotating clockwise/counter-clockwise to scale up/down
     const state = useUiStore.getState();
+    const objectScale = state.cubeScale;
 
-    const scale = state.cubeScale;
+    const tiltAngle = this.cameraRotation.z;
+    const prevTiltAngle = this.prevTiltAngle || tiltAngle;
+    this.prevTiltAngle = tiltAngle;
+
+    const tiltDelta = tiltAngle - prevTiltAngle;
+    const scaleDelta = tiltDelta * 5;
+
     const newScale = new Vector3(
-      scale.x + distanceDelta * 0.01,
-      scale.y + distanceDelta * 0.01,
-      scale.z + distanceDelta * 0.01
+      objectScale.x + scaleDelta,
+      objectScale.y + scaleDelta,
+      objectScale.z + scaleDelta
     );
-
     state.setCubeScale(newScale);
   }
 
   onRotate(nextTouchPoints?: Touch[]) {
     const touchPoints = nextTouchPoints || this.currentTouchPoints;
     if (touchPoints.length < 1) return;
-    if (this.prevTouchX === null || this.prevTouchY === null) return;
 
-    const touch = touchPoints[0];
+    // Copy movement of the device with multiplicator to allow full modification while still seeing it
+    const ROTATION_MULTIPLICATOR = 7; // 1/7th rotation is needed for a full rotation of the object
     const state = useUiStore.getState();
-    const rotation = state.cubeRotation;
+    const objectRotation = state.cubeRotation;
+    const prevRotation = this.prevRotation;
+    this.prevRotation = new Euler(
+      this.cameraRotation.x,
+      this.cameraRotation.y,
+      this.cameraRotation.z
+    );
 
-    const distanceX = touch.clientX - this.prevTouchX;
-    const distanceY = touch.clientY - this.prevTouchY;
+    if (prevRotation == null) return;
+    const rotationDelta = new Euler(
+      this.cameraRotation.x - prevRotation.x,
+      this.cameraRotation.y - prevRotation.y,
+      this.cameraRotation.z - prevRotation.z
+    );
 
     const newRotation = new Euler(
-      rotation.x + distanceY * 0.01,
-      rotation.y + distanceX * 0.01,
-      rotation.z
+      objectRotation.x - rotationDelta.x * ROTATION_MULTIPLICATOR,
+      objectRotation.y - rotationDelta.y * ROTATION_MULTIPLICATOR,
+      objectRotation.z - rotationDelta.z * ROTATION_MULTIPLICATOR
     );
 
     state.setCubeRotation(newRotation);

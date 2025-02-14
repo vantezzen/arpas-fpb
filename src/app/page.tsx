@@ -38,6 +38,11 @@ export default function HomePage() {
             <Link href="/proto/modeless-touch">Modeless + Touch</Link>
           </Button>
         </li>
+        <li>
+          <Button>
+            <Link href="/proto/modeful-position">Modeful + Position</Link>
+          </Button>
+        </li>
       </ul>
 
       <p>Prototypes v0:</p>

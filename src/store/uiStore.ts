@@ -12,6 +12,9 @@ interface UiState {
   cubeRotation: Euler;
   cubeScale: Vector3;
 
+  debugMessage?: string;
+  setDebugMessage: (message?: string) => void;
+
   setCubePosition: (position: Vector3) => void;
   setCubeRotation: (rotation: Euler) => void;
   setCubeScale: (scale: Vector3) => void;
@@ -24,6 +27,8 @@ export const useUiStore = create<UiState>((set) => ({
   cubePosition: new Vector3(),
   cubeRotation: new Euler(),
   cubeScale: new Vector3(1, 1, 1),
+
+  setDebugMessage: (message) => set({ debugMessage: message }),
 
   setCubePosition: (position) => set({ cubePosition: position }),
   setCubeRotation: (rotation) => set({ cubeRotation: rotation }),
